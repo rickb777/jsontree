@@ -1,2 +1,2 @@
 # jsontree
-Simple traversal of JSON data
+Simple traversal of JSON data.
