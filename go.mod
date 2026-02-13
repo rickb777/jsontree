@@ -11,3 +11,5 @@ require (
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/rickb777/plural v1.4.8 // indirect
 )
+
+tool github.com/magefile/mage
