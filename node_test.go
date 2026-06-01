@@ -44,6 +44,15 @@ func TestAsXxx(t *testing.T) {
 		expect.Value(None[any]().AsFloat64()).ToBe(t, None[float64]())
 	})
 
+	t.Run("[]string good", func(t *testing.T) {
+		expect.Value(Some[any]([]any{"1", "2", "3"}).AsStrings()).ToBe(t, Some[[]string]([]string{"1", "2", "3"}))
+	})
+
+	t.Run("[]string bad", func(t *testing.T) {
+		expect.Value(Some[any]([]bool{true, false}).AsStrings()).ToBe(t,
+			Option[[]string]{Err: errors.New("[]bool is not []string")})
+	})
+
 	t.Run("[]int good", func(t *testing.T) {
 		expect.Value(Some[any]([]any{1, 2, 3}).AsInts()).ToBe(t, Some[[]int]([]int{1, 2, 3}))
 		expect.Value(Some[any]([]any{1.0, 2.0, 3.0}).AsInts()).ToBe(t, Some[[]int]([]int{1, 2, 3}))
@@ -111,6 +120,17 @@ func TestCoerceXxx(t *testing.T) {
 		expect.Value(Some[any](true).CoerceFloat64()).ToBe(t,
 			Option[float64]{Err: errors.New("cannot coerce bool to float64")})
 		expect.Value(None[any]().CoerceFloat64()).ToBe(t, None[float64]())
+	})
+
+	t.Run("[]string good", func(t *testing.T) {
+		expect.Value(Some[any]([]any{"1", "2", "3"}).CoerceStrings()).ToBe(t, Some[[]string]([]string{"1", "2", "3"}))
+		expect.Value(Some[any]([]any{1, 2, 3}).CoerceStrings()).ToBe(t, Some[[]string]([]string{"1", "2", "3"}))
+		expect.Value(Some[any]([]any{1.0, 2.0, 3.0}).CoerceStrings()).ToBe(t, Some[[]string]([]string{"1", "2", "3"}))
+	})
+
+	t.Run("[]string bad", func(t *testing.T) {
+		expect.Value(Some[any]([]bool{true, false}).CoerceStrings()).ToBe(t,
+			Option[[]string]{Err: errors.New("[]bool is not []string")})
 	})
 
 	t.Run("[]int good", func(t *testing.T) {

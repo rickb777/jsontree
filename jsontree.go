@@ -73,10 +73,10 @@ func arrayElement(node any, ki int, keys []any) Option[any] {
 }
 
 func notFound(keys []any) Option[any] {
-	return Option[any]{Err: fmt.Errorf("%s not found", strings.Join(coerceStrings(keys), ","))}
+	return Option[any]{Err: fmt.Errorf("%s not found", strings.Join(coerceStringSlice(keys), ","))}
 }
 
-func coerceStrings(vv []any) []string {
+func coerceStringSlice(vv []any) []string {
 	ss := make([]string, len(vv))
 	for i, v := range vv {
 		ss[i] = fmt.Sprintf("%v", v)

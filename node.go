@@ -186,7 +186,63 @@ func float64OrError(f float64, err error) Option[float64] {
 
 //-------------------------------------------------------------------------------------------------
 
+// AsStrings obtains an optional string slice, provided that o contains a slice of strings.
+// This only handles []string or []any; see [Option.CoerceStrings] for value formatting capability.
+func (o Option[T]) AsStrings() Option[[]string] {
+	if o.Err != nil {
+		return Option[[]string]{Err: o.Err}
+	}
+	return asStrings(o.V)
+}
+
+func asStrings(v any) Option[[]string] {
+	switch n := v.(type) {
+	case []string:
+		return Some[[]string](n)
+	case []any:
+		ii := make([]string, 0, len(n))
+		for _, i := range n {
+			oi := asString(i)
+			if oi.Err != nil {
+				return wrongType[[]string](n, "[]string")
+			}
+			ii = append(ii, oi.V)
+		}
+		return Some[[]string](ii)
+	}
+	return wrongType[[]string](v, "[]string")
+}
+
+// CoerceStrings obtains an optional string slice, provided that o contains a slice of strings, ints or float64s.
+func (o Option[T]) CoerceStrings() Option[[]string] {
+	if o.Err != nil {
+		return Option[[]string]{Err: o.Err}
+	}
+	return coerceStrings(o.V)
+}
+
+func coerceStrings(v any) Option[[]string] {
+	switch n := v.(type) {
+	case []string:
+		return Some[[]string](n)
+	case []any:
+		ii := make([]string, 0, len(n))
+		for _, i := range n {
+			oi := coerceString(i)
+			if oi.Err != nil {
+				return wrongType[[]string](n, "[]string")
+			}
+			ii = append(ii, oi.V)
+		}
+		return Some[[]string](ii)
+	}
+	return wrongType[[]string](v, "[]string")
+}
+
+//-------------------------------------------------------------------------------------------------
+
 // AsInts obtains an optional int slice, provided that o contains a slice of ints.
+// This only handles []int or []any; see [Option.CoerceInts] for value parsing capability.
 func (o Option[T]) AsInts() Option[[]int] {
 	if o.Err != nil {
 		return Option[[]int]{Err: o.Err}
@@ -196,8 +252,8 @@ func (o Option[T]) AsInts() Option[[]int] {
 
 func asInts(v any) Option[[]int] {
 	switch n := v.(type) {
-	//case []int:
-	//	return Some[[]int](n)
+	case []int:
+		return Some[[]int](n)
 	case []any:
 		ii := make([]int, 0, len(n))
 		for _, i := range n {
@@ -241,6 +297,7 @@ func coerceInts(v any) Option[[]int] {
 //-------------------------------------------------------------------------------------------------
 
 // AsFloat64s obtains an optional float64 slice, provided that o contains a slice of float64s.
+// This only handles []float64 or []any; see [Option.CoerceFloat64s] for value parsing capability.
 func (o Option[T]) AsFloat64s() Option[[]float64] {
 	if o.Err != nil {
 		return Option[[]float64]{Err: o.Err}
