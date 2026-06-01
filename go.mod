@@ -3,8 +3,8 @@ module github.com/rickb777/jsontree
 go 1.25.4
 
 require (
-	github.com/magefile/mage v1.17.1
-	github.com/rickb777/expect v1.2.1
+	github.com/magefile/mage v1.17.2
+	github.com/rickb777/expect v1.3.0
 )
 
 require (
