@@ -10,7 +10,7 @@ import (
 	"github.com/rickb777/expect"
 )
 
-func ExampleTreeNode_tree() {
+func ExampleTreeNode_using_standard_decoder() {
 	// some JSON
 	s := `{
 		"meta":{"code":200, "status":"OK"},

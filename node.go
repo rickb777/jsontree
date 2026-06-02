@@ -187,7 +187,7 @@ func asFloat64(v any) Option[float64] {
 	case float64:
 		return Some[float64](n)
 	case json.Number:
-		return float64OrError(n.Float64())
+		return valueOrError(n.Float64())
 	}
 	return wrongType[float64](v, "a float64")
 }
@@ -207,19 +207,12 @@ func coerceFloat64(v any) Option[float64] {
 	case float64:
 		return Some[float64](n)
 	case json.Number:
-		return float64OrError(n.Float64())
+		return valueOrError(n.Float64())
 	// coercive types
 	case string:
-		return float64OrError(strconv.ParseFloat(n, 64))
+		return valueOrError(strconv.ParseFloat(n, 64))
 	}
 	return cannotCoerce[float64](v, "float64")
-}
-
-func float64OrError(f float64, err error) Option[float64] {
-	if err != nil {
-		return Option[float64]{Err: err}
-	}
-	return Some[float64](f)
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -254,16 +247,16 @@ func coerceBool(v any) Option[bool] {
 		return Some[bool](n)
 	// coercive types
 	case string:
-		return boolOrError(strconv.ParseBool(n))
+		return valueOrError(strconv.ParseBool(n))
 	}
 	return cannotCoerce[bool](v, "bool")
 }
 
-func boolOrError(f bool, err error) Option[bool] {
+func valueOrError[T string | int | float64 | bool](v T, err error) Option[T] {
 	if err != nil {
-		return Option[bool]{Err: err}
+		return Option[T]{Err: err}
 	}
-	return Some[bool](f)
+	return Some[T](v)
 }
 
 //=================================================================================================
@@ -433,7 +426,7 @@ func coerceFloat64s(v any) Option[[]float64] {
 
 //-------------------------------------------------------------------------------------------------
 
-// AsBools obtains an optional bool slice, provided that o contains a slice of numbers.
+// AsBools obtains an optional bool slice, provided that o contains a slice of bools.
 // This only handles []bool or []any; see [Option.CoerceBools] for value parsing capability.
 func (o Option[T]) AsBools() Option[[]bool] {
 	if o.Err != nil {
