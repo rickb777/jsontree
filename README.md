@@ -6,6 +6,9 @@
 [![Coverage](https://coveralls.io/repos/github/rickb777/jsontree/badge.svg?branch=main)](https://coveralls.io/github/rickb777/jsontree?branch=main)
 [![Issues](https://img.shields.io/github/issues/rickb777/jsontree.svg)](https://github.com/rickb777/jsontree/issues)
 
+Sometimes, you don't want to unmarshal a whole JSON document to find just a few values. This API provides easy
+access to items of interest within JSON documents.
+
 JSON documents are trees containing leaves and intermediate nodes. Leaves can be
 
  * string - UTF-8 characters surrounded by `"` marks
