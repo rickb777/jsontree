@@ -48,10 +48,11 @@ There are also plural converters, e.g. `AsStrings` returns `Option[[]string]` in
 provided that the input was an array of strings.
 
 The `AsXxx` methods *simply alter the type* of the result based on inspection of the value; the value is absent if it is not
-of the correct type or have a direct conversion (number → int, etc).
+of the correct type or does not have a direct conversion (e.g. number → `int`).
 
 The `CoerceXxx` methods *convert the type* of the result to the required type (e.g. by using `strconv.ParseInt`); the resulting
 value is absent if conversion failed.
 
 The `Option.Present()` method returns true iff the value is present. If not, `Option.Err` will provide information about why not.
+
 It is OK to call methods on absent option values; the earlier error will be propagated to the result.
