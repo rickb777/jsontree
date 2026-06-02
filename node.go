@@ -401,3 +401,58 @@ func coerceFloat64s(v any) Option[[]float64] {
 	}
 	return wrongType[[]float64](v, "[]float64")
 }
+
+//-------------------------------------------------------------------------------------------------
+
+// AsBools obtains an optional bool slice, provided that o contains a slice of numbers.
+// This only handles []bool or []any; see [Option.CoerceBools] for value parsing capability.
+func (o Option[T]) AsBools() Option[[]bool] {
+	if o.Err != nil {
+		return Option[[]bool]{Err: o.Err}
+	}
+	return asBools(o.V)
+}
+
+func asBools(v any) Option[[]bool] {
+	switch n := v.(type) {
+	case []bool:
+		return Some[[]bool](n)
+	case []any:
+		ii := make([]bool, 0, len(n))
+		for _, i := range n {
+			oi := asBool(i)
+			if oi.Err != nil {
+				return wrongType[[]bool](n, "[]bool")
+			}
+			ii = append(ii, oi.V)
+		}
+		return Some[[]bool](ii)
+	}
+	return wrongType[[]bool](v, "[]bool")
+}
+
+// CoerceBools obtains an optional bool slice, provided that o contains a slice of bools.
+func (o Option[T]) CoerceBools() Option[[]bool] {
+	if o.Err != nil {
+		return Option[[]bool]{Err: o.Err}
+	}
+	return coerceBools(o.V)
+}
+
+func coerceBools(v any) Option[[]bool] {
+	switch n := v.(type) {
+	case []bool:
+		return Some[[]bool](n)
+	case []any:
+		ii := make([]bool, 0, len(n))
+		for _, i := range n {
+			oi := coerceBool(i)
+			if oi.Err != nil {
+				return wrongType[[]bool](n, "[]bool")
+			}
+			ii = append(ii, oi.V)
+		}
+		return Some[[]bool](ii)
+	}
+	return wrongType[[]bool](v, "[]bool")
+}

@@ -198,4 +198,31 @@ func TestOptions(t *testing.T) {
 			Option[[]float64]{Err: errors.New("[]bool is not []float64")})
 		expect.Value(None[any]().CoerceFloat64s()).ToBe(t, None[[]float64]())
 	})
+
+	t.Run("AsBools good", func(t *testing.T) {
+		expect.Value(Some[any]([]any{true, false}).AsBools()).ToBe(t, Some[[]bool]([]bool{true, false}))
+		expect.Value(Some[any]([]bool{true, false}).AsBools()).ToBe(t, Some[[]bool]([]bool{true, false}))
+	})
+
+	t.Run("AsBools bad", func(t *testing.T) {
+		expect.Value(Some[any]([]any{"true", "false"}).AsBools()).ToBe(t,
+			Option[[]bool]{Err: errors.New("[]interface {} is not []bool")})
+		expect.Value(Some[any]([]int{1, 2}).AsBools()).ToBe(t,
+			Option[[]bool]{Err: errors.New("[]int is not []bool")})
+		expect.Value(None[any]().AsBools()).ToBe(t, None[[]bool]())
+	})
+
+	t.Run("CoerceBools good", func(t *testing.T) {
+		expect.Value(Some[any]([]any{true, false}).CoerceBools()).ToBe(t, Some[[]bool]([]bool{true, false}))
+		expect.Value(Some[any]([]bool{true, false}).CoerceBools()).ToBe(t, Some[[]bool]([]bool{true, false}))
+		expect.Value(Some[any]([]any{"true", "false"}).CoerceBools()).ToBe(t, Some[[]bool]([]bool{true, false}))
+	})
+
+	t.Run("CoerceBools bad", func(t *testing.T) {
+		expect.Value(Some[any]([]any{true, 2}).CoerceBools()).ToBe(t,
+			Option[[]bool]{Err: errors.New("[]interface {} is not []bool")})
+		expect.Value(Some[any]([]int{1, 2}).CoerceBools()).ToBe(t,
+			Option[[]bool]{Err: errors.New("[]int is not []bool")})
+		expect.Value(None[any]().CoerceBools()).ToBe(t, None[[]bool]())
+	})
 }
