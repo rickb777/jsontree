@@ -10,7 +10,7 @@ import (
 	"github.com/rickb777/expect"
 )
 
-func ExampleTreeNode() {
+func ExampleTreeNode_tree() {
 	// some JSON
 	s := `{
 		"meta":{"code":200, "status":"OK"},
@@ -28,7 +28,7 @@ func ExampleTreeNode() {
 	}`
 
 	// decode the JSON as a tree
-	tree := map[string]any{}
+	tree := map[string]any{} // could be just `any`
 	err := json.NewDecoder(strings.NewReader(s)).Decode(&tree)
 	if err != nil {
 		panic(err)
@@ -61,7 +61,7 @@ func TestTree_builtin_numbers(t *testing.T) {
 		"meta":{"code":200, "status":"OK"},
 		"response":{
 			"csrf_token":"x.y.z",
-			"user":{"authentication_token":"a.b.c"}
+			"user":{"auth_token":"a.b.c"}
 		},
 		"props":[
 			{"a":1},
@@ -82,7 +82,7 @@ func TestTree_builtin_numbers(t *testing.T) {
 	expect.Value(TreeNode(tree, "meta", "status").AsString()).ToBe(t, Some[string]("OK"))
 	expect.Value(TreeNode(tree, "meta", "status", "absent")).ToBe(t,
 		Option[any]{Err: errors.New("meta,status,absent not found")})
-	expect.Value(TreeNode(tree, "response", "user", "authentication_token").AsString()).ToBe(t, Some[string]("a.b.c"))
+	expect.Value(TreeNode(tree, "response", "user", "auth_token").AsString()).ToBe(t, Some[string]("a.b.c"))
 	expect.Value(TreeNode(tree, "props", 0, "a").AsInt()).ToBe(t, Some[int](1))
 	expect.Value(TreeNode(tree, "props", 1, "b").AsFloat64()).ToBe(t, Some[float64](2.1))
 	expect.Value(TreeNode(tree, "nest", 0, 2).AsInt()).ToBe(t, Some[int](8))
@@ -90,6 +90,12 @@ func TestTree_builtin_numbers(t *testing.T) {
 
 	expect.Bool(TreeNode(tree, "meta", "code").Present()).ToBe(t, true)
 	expect.Bool(TreeNode(tree, "meta", "status", "absent").Present()).ToBe(t, false)
+
+	response := TreeNode(tree, "response")
+	expect.Value(response.SubTree("user", "auth_token").AsString()).ToBe(t, Some[string]("a.b.c"))
+
+	nest0 := TreeNode(tree, "nest", 0)
+	expect.Value(nest0.SubTree(2).AsInt()).ToBe(t, Some[int](8))
 }
 
 func TestTree_json_numbers(t *testing.T) {
@@ -97,7 +103,7 @@ func TestTree_json_numbers(t *testing.T) {
 		"meta":{"code":200, "status":"OK"},
 		"response":{
 			"csrf_token":"x.y.z",
-			"user":{"authentication_token":"a.b.c"}
+			"user":{"auth_token":"a.b.c"}
 		},
 		"props":[
 			{"a":1},
@@ -121,7 +127,7 @@ func TestTree_json_numbers(t *testing.T) {
 	expect.Value(TreeNode(tree, "meta", "status").AsString()).ToBe(t, Some[string]("OK"))
 	expect.Value(TreeNode(tree, "meta", "status", "absent")).ToBe(t,
 		Option[any]{Err: errors.New("meta,status,absent not found")})
-	expect.Value(TreeNode(tree, "response", "user", "authentication_token").AsString()).ToBe(t,
+	expect.Value(TreeNode(tree, "response", "user", "auth_token").AsString()).ToBe(t,
 		Some[string]("a.b.c"))
 	expect.Value(TreeNode(tree, "props", 0, "a").AsInt()).ToBe(t, Some[int](1))
 	expect.Value(TreeNode(tree, "props", 1, "b").AsFloat64()).ToBe(t, Some[float64](2.1))
@@ -129,6 +135,12 @@ func TestTree_json_numbers(t *testing.T) {
 	expect.Value(TreeNode(tree, "nest", 0, 2).AsFloat64()).ToBe(t, Some[float64](8))
 
 	expect.String(TreeNode(tree, "nest", 0, 2).String()).ToBe(t, "Some(8)")
+}
+
+func TestArray_json_numbers(t *testing.T) {
+	s := `[[3,5,8], [1,9,0,0], {"ok":true}]`
+	expect.Value(TreeNode(s, 0, 1).AsInt()).ToBe(t, Some[int](5))
+	expect.Value(TreeNode(s, 2, "ok").AsBool()).ToBe(t, Some[bool](true))
 }
 
 func TestSlices(t *testing.T) {

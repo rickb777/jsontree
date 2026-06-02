@@ -46,6 +46,35 @@ func (o Option[T]) Present() bool {
 
 //-------------------------------------------------------------------------------------------------
 
+// SubTree traverses deeper from some intermediate node. For example if
+//
+//	response := TreeNode(tree, "response")
+//
+// does not return a leaf node but instead returns an intermediate node, then
+//
+//	response.SubTree("user", "auth_token")
+//
+// can traverse to nodes below response. It does not matter whether the
+// intermediate node is a JSON object or a JSON array.
+//
+// For objects, the keys should be strings; for arrays, the keys should be integers.
+func (o Option[T]) SubTree(keys ...any) Option[any] {
+	if o.Err != nil {
+		return Option[any]{Err: o.Err}
+	}
+
+	switch t1 := any(o.V).(type) {
+	case map[string]any:
+		return treeNode(t1, 0, keys)
+	case []any:
+		return traverseArray(t1, 0, keys)
+	}
+
+	return notFound(keys)
+}
+
+//-------------------------------------------------------------------------------------------------
+
 // AsString obtains an optional string, provided that o contains a string value.
 func (o Option[T]) AsString() Option[string] {
 	if o.Err != nil {
