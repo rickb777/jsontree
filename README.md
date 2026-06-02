@@ -54,3 +54,4 @@ The `CoerceXxx` methods *convert the type* of the result to the required type (e
 value is absent if conversion failed.
 
 The `Option.Present()` method returns true iff the value is present. If not, `Option.Err` will provide information about why not.
+It is OK to call methods on absent option values; the earlier error will be propagated to the result.
