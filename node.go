@@ -31,6 +31,8 @@ func (o Option[T]) String() string {
 	return fmt.Sprintf("Some(%v)", o.V)
 }
 
+// Present returns true iff the option contains a value. Otherwise, [Option.Err] will contain 
+// more information about why not.
 func (o Option[T]) Present() bool {
 	return o.Err == nil
 }
