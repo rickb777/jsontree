@@ -6,14 +6,21 @@ import (
 	"strconv"
 )
 
+// Option wraps some value, which may be present or absent, of some type.
 type Option[T any] struct {
-	V   T
+	// V is the value contained, if present.
+	V T
+	// Err is nil for values that are present; when non-nil, the
+	// optional value is absent and this error provides a reason.
 	Err error
 }
 
 var ErrAbsent = fmt.Errorf("absent")
 
-func None[T any]() Option[T]    { return Option[T]{Err: ErrAbsent} }
+// None creates an empty optional value.
+func None[T any]() Option[T] { return Option[T]{Err: ErrAbsent} }
+
+// Some wraps some value to create an option that is present.
 func Some[T any](v T) Option[T] { return Option[T]{V: v} }
 
 func wrongType[T any](v any, exp string) Option[T] {
