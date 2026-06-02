@@ -27,11 +27,13 @@ func ExampleTreeNode_tree() {
 		]
 	}`
 
+	d := json.NewDecoder(strings.NewReader(s))
+	d.UseNumber() // this is optional
+
 	// decode the JSON as a tree
-	tree := map[string]any{} // could be just `any`
-	err := json.NewDecoder(strings.NewReader(s)).Decode(&tree)
-	if err != nil {
-		panic(err)
+	tree := map[string]any{} // could be just `any` instead
+	if err := d.Decode(&tree); err != nil {
+		panic(err) // replace with whatever
 	}
 
 	// traverse the tree for a selection of nodes
@@ -54,6 +56,26 @@ func ExampleTreeNode_tree() {
 	// nest,0,1                : 5
 	// nest,0,2                : 8
 	// nest,0                  : [3 5 8]
+}
+
+func ExampleTreeNode_string_input() {
+	// some JSON
+	s := `{
+		"meta":{"code":200, "status":"OK"},
+		"response":{
+			"csrf_token":"x.y.z",
+			"user":{"auth_token":"a.b.c"}
+		}
+	}`
+
+	// It's OK to pass a JSON string into `TreeNode`. Using a
+	// string like this is very easy, but the JSON decoder will work
+	// too hard if this is called more than once. Use sparingly!
+	// Also, it will panic if the string isn't JSON.
+
+	fmt.Println("meta,code:", TreeNode(s, "meta", "code").AsInt().V)
+	// Output:
+	// meta,code: 200
 }
 
 func TestTree_builtin_numbers(t *testing.T) {

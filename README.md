@@ -77,3 +77,5 @@ value is absent if conversion failed.
 The `Option.Present()` method returns true iff the value is present. If not, `Option.Err` will provide information about why not.
 
 It is OK to call methods on absent option values; the earlier error will be propagated to the result.
+
+If an `Option[any]` actually contains an intermediate JSON node, the `SubTree` method can be used to explore this sub-tree further.
