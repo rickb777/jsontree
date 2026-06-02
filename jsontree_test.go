@@ -87,6 +87,9 @@ func TestTree_builtin_numbers(t *testing.T) {
 	expect.Value(TreeNode(tree, "props", 1, "b").AsFloat64()).ToBe(t, Some[float64](2.1))
 	expect.Value(TreeNode(tree, "nest", 0, 2).AsInt()).ToBe(t, Some[int](8))
 	expect.Value(TreeNode(tree, "nest", 0, 2).AsFloat64()).ToBe(t, Some[float64](8))
+
+	expect.Bool(TreeNode(tree, "meta", "code").Present()).ToBe(t, true)
+	expect.Bool(TreeNode(tree, "meta", "status", "absent").Present()).ToBe(t, false)
 }
 
 func TestTree_json_numbers(t *testing.T) {
@@ -124,6 +127,8 @@ func TestTree_json_numbers(t *testing.T) {
 	expect.Value(TreeNode(tree, "props", 1, "b").AsFloat64()).ToBe(t, Some[float64](2.1))
 	expect.Value(TreeNode(tree, "nest", 0, 2).AsInt()).ToBe(t, Some[int](8))
 	expect.Value(TreeNode(tree, "nest", 0, 2).AsFloat64()).ToBe(t, Some[float64](8))
+
+	expect.String(TreeNode(tree, "nest", 0, 2).String()).ToBe(t, "Some(8)")
 }
 
 func TestSlices(t *testing.T) {

@@ -237,7 +237,7 @@ func boolOrError(f bool, err error) Option[bool] {
 	return Some[bool](f)
 }
 
-//-------------------------------------------------------------------------------------------------
+//=================================================================================================
 
 // AsStrings obtains an optional string slice, provided that o contains a slice of strings.
 // This only handles []string or []any; see [Option.CoerceStrings] for value formatting capability.
