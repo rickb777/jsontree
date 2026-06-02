@@ -78,7 +78,7 @@ func coerceString(v any) Option[string] {
 
 //-------------------------------------------------------------------------------------------------
 
-// AsInt obtains an optional int, provided that o contains an int value.
+// AsInt obtains an optional int, provided that o contains a numeric value.
 func (o Option[T]) AsInt() Option[int] {
 	if o.Err != nil {
 		return Option[int]{Err: o.Err}
@@ -134,7 +134,7 @@ func intOrError(i int64, err error) Option[int] {
 
 //-------------------------------------------------------------------------------------------------
 
-// AsFloat64 obtains an optional float64, provided that o contains a float64 value.
+// AsFloat64 obtains an optional float64, provided that o contains a numeric value.
 func (o Option[T]) AsFloat64() Option[float64] {
 	if o.Err != nil {
 		return Option[float64]{Err: o.Err}
@@ -241,7 +241,7 @@ func coerceStrings(v any) Option[[]string] {
 
 //-------------------------------------------------------------------------------------------------
 
-// AsInts obtains an optional int slice, provided that o contains a slice of ints.
+// AsInts obtains an optional int slice, provided that o contains a slice of numbers.
 // This only handles []int or []any; see [Option.CoerceInts] for value parsing capability.
 func (o Option[T]) AsInts() Option[[]int] {
 	if o.Err != nil {
@@ -296,7 +296,7 @@ func coerceInts(v any) Option[[]int] {
 
 //-------------------------------------------------------------------------------------------------
 
-// AsFloat64s obtains an optional float64 slice, provided that o contains a slice of float64s.
+// AsFloat64s obtains an optional float64 slice, provided that o contains a slice of numbers.
 // This only handles []float64 or []any; see [Option.CoerceFloat64s] for value parsing capability.
 func (o Option[T]) AsFloat64s() Option[[]float64] {
 	if o.Err != nil {
