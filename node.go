@@ -38,7 +38,7 @@ func (o Option[T]) String() string {
 	return fmt.Sprintf("Some(%v)", o.V)
 }
 
-// Present returns true iff the option contains a value. Otherwise, [Option.Err] will contain 
+// Present returns true iff the option contains a value. Otherwise, [Option.Err] will contain
 // more information about why not.
 func (o Option[T]) Present() bool {
 	return o.Err == nil
@@ -191,6 +191,50 @@ func float64OrError(f float64, err error) Option[float64] {
 		return Option[float64]{Err: err}
 	}
 	return Some[float64](f)
+}
+
+//-------------------------------------------------------------------------------------------------
+
+// AsBool obtains an optional bool, provided that o contains a boolean value.
+func (o Option[T]) AsBool() Option[bool] {
+	if o.Err != nil {
+		return Option[bool]{Err: o.Err}
+	}
+	return asBool(o.V)
+}
+
+func asBool(v any) Option[bool] {
+	switch n := v.(type) {
+	case bool:
+		return Some[bool](n)
+	}
+	return wrongType[bool](v, "a bool")
+}
+
+// CoerceBool obtains an optional bool, converting to bool if required.
+func (o Option[T]) CoerceBool() Option[bool] {
+	if o.Err != nil {
+		return Option[bool]{Err: o.Err}
+	}
+	return coerceBool(o.V)
+}
+
+func coerceBool(v any) Option[bool] {
+	switch n := v.(type) {
+	case bool:
+		return Some[bool](n)
+	// coercive types
+	case string:
+		return boolOrError(strconv.ParseBool(n))
+	}
+	return cannotCoerce[bool](v, "bool")
+}
+
+func boolOrError(f bool, err error) Option[bool] {
+	if err != nil {
+		return Option[bool]{Err: err}
+	}
+	return Some[bool](f)
 }
 
 //-------------------------------------------------------------------------------------------------

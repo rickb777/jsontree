@@ -10,13 +10,13 @@ import (
 	"github.com/rickb777/expect"
 )
 
-func ExampleTreeNode_builtin_numbers() {
+func ExampleTreeNode() {
 	// some JSON
 	s := `{
 		"meta":{"code":200, "status":"OK"},
 		"response":{
 			"csrf_token":"x.y.z",
-			"user":{"authentication_token":"a.b.c"}
+			"user":{"auth_token":"a.b.c"}
 		},
 		"props":[
 			{"a":1},
@@ -35,25 +35,25 @@ func ExampleTreeNode_builtin_numbers() {
 	}
 
 	// traverse the tree for a selection of nodes
-	fmt.Println(TreeNode(tree, "meta", "code").AsInt().V)
-	fmt.Println(TreeNode(tree, "meta", "status").AsString().V)
-	fmt.Println(TreeNode(tree, "meta", "status", "absent"))
-	fmt.Println(TreeNode(tree, "response", "user", "authentication_token").AsString().V)
-	fmt.Println(TreeNode(tree, "props", 0, "a").AsInt().V)
-	fmt.Println(TreeNode(tree, "props", 1, "b").AsFloat64().V)
-	fmt.Println(TreeNode(tree, "nest", 0, 1).AsInt().V)
-	fmt.Println(TreeNode(tree, "nest", 0, 2).AsFloat64().V)
-	fmt.Println(TreeNode(tree, "nest", 0).AsInts().V)
+	fmt.Println("meta,code               :", TreeNode(tree, "meta", "code").AsInt().V)
+	fmt.Println("meta,status             :", TreeNode(tree, "meta", "status").AsString().V)
+	fmt.Println("meta,status,absent      :", TreeNode(tree, "meta", "status", "absent")) // value is absent
+	fmt.Println("response,user,auth_token:", TreeNode(tree, "response", "user", "auth_token").AsString().V)
+	fmt.Println("props,0,a               :", TreeNode(tree, "props", 0, "a").AsInt().V)
+	fmt.Println("props,1,b               :", TreeNode(tree, "props", 1, "b").AsFloat64().V)
+	fmt.Println("nest,0,1                :", TreeNode(tree, "nest", 0, 1).AsInt().V)
+	fmt.Println("nest,0,2                :", TreeNode(tree, "nest", 0, 2).AsFloat64().V)
+	fmt.Println("nest,0                  :", TreeNode(tree, "nest", 0).AsInts().V)
 	// Output:
-	// 200
-	// OK
-	// None(meta,status,absent not found)
-	// a.b.c
-	// 1
-	// 2.1
-	// 5
-	// 8
-	// [3 5 8]
+	// meta,code               : 200
+	// meta,status             : OK
+	// meta,status,absent      : None(meta,status,absent not found)
+	// response,user,auth_token: a.b.c
+	// props,0,a               : 1
+	// props,1,b               : 2.1
+	// nest,0,1                : 5
+	// nest,0,2                : 8
+	// nest,0                  : [3 5 8]
 }
 
 func TestTree_builtin_numbers(t *testing.T) {
